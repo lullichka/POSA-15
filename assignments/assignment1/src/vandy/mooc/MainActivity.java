@@ -1,6 +1,8 @@
 package vandy.mooc;
 
+
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -54,13 +56,29 @@ public class MainActivity extends LifecycleLoggingActivity {
         // Always call super class for necessary
         // initialization/implementation.
         // @@ TODO -- you fill in here.
-
+    	super.onCreate(savedInstanceState);
+  	
+        if(savedInstanceState != null) {
+            // The activity is being re-created. Use the
+            // savedInstanceState bundle for initializations either
+            // during onCreate or onRestoreInstanceState().
+            Log.d(TAG,
+                  "onCreate(): activity re-created from savedInstanceState");
+						
+        } else {
+            // Activity is being created anew.  No prior saved
+            // instance state information available in Bundle object.
+            Log.d(TAG,
+                  "onCreate(): activity created anew");
+        }
         // Set the default layout.
         // @@ TODO -- you fill in here.
+    	setContentView(R.layout.main_activity);
 
         // Cache the EditText that holds the urls entered by the user
         // (if any).
         // @@ TODO -- you fill in here.
+    	mUrlEditText = (EditText) findViewById(R.id.url);
     }
 
     /**
@@ -105,11 +123,11 @@ public class MainActivity extends LifecycleLoggingActivity {
         // Check if the started Activity completed successfully.
         // @@ TODO -- you fill in here, replacing true with the right
         // code.
-        if (true) {
+        if (resultCode == RESULT_OK) {
             // Check if the request code is what we're expecting.
             // @@ TODO -- you fill in here, replacing true with the
             // right code.
-            if (true) {
+            if (requestCode == DOWNLOAD_IMAGE_REQUEST) {
                 // Call the makeGalleryIntent() factory method to
                 // create an Intent that will launch the "Gallery" app
                 // by passing in the path to the downloaded image
@@ -138,6 +156,8 @@ public class MainActivity extends LifecycleLoggingActivity {
         // the image.
     	// TODO -- you fill in here, replacing "false" with the proper
     	// code.
+    	Intent intentGallery = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+    	return intentGallery;
     }
 
     /**
@@ -147,6 +167,11 @@ public class MainActivity extends LifecycleLoggingActivity {
         // Create an intent that will download the image from the web.
     	// TODO -- you fill in here, replacing "false" with the proper
     	// code.
+    	
+    	Intent intentDownload = new Intent(Intent.ACTION_WEB_SEARCH);
+    	intentDownload.putExtra(SearchManager.QUERY, url.toString());
+    	intentDownload.getStringExtra(SearchManager.QUERY);
+    	return intentDownload;
     }
 
     /**
@@ -167,7 +192,8 @@ public class MainActivity extends LifecycleLoggingActivity {
         // toast if the URL is invalid.
         // @@ TODO -- you fill in here, replacing "true" with the
         // proper code.
-        if (true)
+        boolean valid=uri.indexOf("http://")==0;
+        if (valid)
             return url;
         else {
             Toast.makeText(this,
