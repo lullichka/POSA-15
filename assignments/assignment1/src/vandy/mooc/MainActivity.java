@@ -1,6 +1,8 @@
 package vandy.mooc;
 
 
+import java.io.File;
+
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -11,7 +13,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -99,12 +100,15 @@ public class MainActivity extends LifecycleLoggingActivity {
             // it's an Intent that's implemented by the
             // DownloadImageActivity.
             // @@ TODO - you fill in here.
+           
+            Intent i= makeDownloadImageIntent(getUrl());
 
             // Start the Activity associated with the Intent, which
             // will download the image and then return the Uri for the
             // downloaded image file via the onActivityResult() hook
             // method.
             // @@ TODO -- you fill in here.
+            startActivityForResult(i, DOWNLOAD_IMAGE_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,17 +137,23 @@ public class MainActivity extends LifecycleLoggingActivity {
                 // by passing in the path to the downloaded image
                 // file.
                 // @@ TODO -- you fill in here.
+            	Intent i = makeGalleryIntent(data.getData().toString());
 
                 // Start the Gallery Activity.
                 // @@ TODO -- you fill in here.
+            	startActivity(i);
             }
-        }
+
+       }
         // Check if the started Activity did not complete successfully
         // and inform the user a problem occurred when trying to
         // download contents at the given URL.
         // @@ TODO -- you fill in here, replacing true with the right
         // code.
         else if (true) {
+            Toast.makeText(this,
+                    "Activity not started",
+                    Toast.LENGTH_SHORT).show();
         }
     }    
 
@@ -156,7 +166,8 @@ public class MainActivity extends LifecycleLoggingActivity {
         // the image.
     	// TODO -- you fill in here, replacing "false" with the proper
     	// code.
-    	Intent intentGallery = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+    	Intent intentGallery = new Intent(Intent.ACTION_VIEW);
+    	intentGallery.setDataAndType(Uri.fromFile(new File(pathToImageFile)),"image/*");
     	return intentGallery;
     }
 
@@ -164,7 +175,7 @@ public class MainActivity extends LifecycleLoggingActivity {
      * Factory method that returns an Intent for downloading an image.
      */
     private Intent makeDownloadImageIntent(Uri url) {
-        // Create an intent that will download the image from the web.
+        // Create an intent that will download the imag/e from the web.+
     	// TODO -- you fill in here, replacing "false" with the proper
     	// code.
     	
@@ -192,7 +203,7 @@ public class MainActivity extends LifecycleLoggingActivity {
         // toast if the URL is invalid.
         // @@ TODO -- you fill in here, replacing "true" with the
         // proper code.
-        boolean valid=uri.indexOf("http://")==0;
+        boolean valid=url.toString().indexOf("http://")==0;
         if (valid)
             return url;
         else {
