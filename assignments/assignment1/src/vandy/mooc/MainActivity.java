@@ -100,15 +100,17 @@ public class MainActivity extends LifecycleLoggingActivity {
             // it's an Intent that's implemented by the
             // DownloadImageActivity.
             // @@ TODO - you fill in here.
-           
+            String title = getResources().getString(R.string.chooser_title);
+        	
             Intent i= makeDownloadImageIntent(getUrl());
-
+            // Create intent to show the chooser dialog
+        	Intent chooser = Intent.createChooser(i, title);
             // Start the Activity associated with the Intent, which
             // will download the image and then return the Uri for the
             // downloaded image file via the onActivityResult() hook
             // method.
             // @@ TODO -- you fill in here.
-            startActivityForResult(i, DOWNLOAD_IMAGE_REQUEST);
+            startActivityForResult(chooser, DOWNLOAD_IMAGE_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -175,13 +177,12 @@ public class MainActivity extends LifecycleLoggingActivity {
      * Factory method that returns an Intent for downloading an image.
      */
     private Intent makeDownloadImageIntent(Uri url) {
-        // Create an intent that will download the imag/e from the web.+
+        // Create an intent that will download the image from the web.
     	// TODO -- you fill in here, replacing "false" with the proper
     	// code.
     	
-    	Intent intentDownload = new Intent(Intent.ACTION_WEB_SEARCH);
+    	Intent intentDownload = new Intent(Intent.ACTION_WEB_SEARCH, url);
     	intentDownload.putExtra(SearchManager.QUERY, url.toString());
-    	intentDownload.getStringExtra(SearchManager.QUERY);
     	return intentDownload;
     }
 

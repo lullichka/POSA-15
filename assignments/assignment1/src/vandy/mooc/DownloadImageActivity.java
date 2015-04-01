@@ -14,10 +14,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.format.Time;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * An Activity that downloads an image, stores it in a local file on
@@ -28,7 +30,8 @@ public class DownloadImageActivity extends Activity {
      * Debugging tag used by the Android logger.
      */
     private final String TAG = getClass().getSimpleName();
-	private Object imageView;
+	private Runnable myRunnable;
+	
 
     /**
      * Hook method called when a new instance of Activity is created.
@@ -60,41 +63,23 @@ public class DownloadImageActivity extends Activity {
         }
         // Get the URL associated with the Intent data.
         // @@ TODO -- you fill in here.
-        Uri url = this.getIntent().getData();
+        final Uri url = this.getIntent().getData();
 
         // Download the image in the background, create an Intent that
         // contains the path to the image file, and set this as the
         // result of the Activity.
-       
+     
+        	    	  DownloadImageActivity.this.runOnUiThread(new Runnable(){
+
+                       DownloadUtils.downloadImage(getApplicationContext(), url);
+
+    
+          
         // @@ TODO -- you fill in here using the Android "HaMeR"
         // concurrency framework.  Note that the finish() method
         // should be called in the UI thread, whereas the other
         // methods should be called in the background thread.
       
     }
-    ImageView iv; 
-    String folderToSave = Environment.getExternalStorageDirectory().toString(); 
-
-    private String SavePicture(ImageView iv, String folderToSave)
-    {
-        OutputStream fOut = null;
-        Time time = new Time();
-        time.setToNow();
-
-        try {
-            File file = new File(folderToSave, Integer.toString(time.year) + Integer.toString(time.month) + Integer.toString(time.monthDay) + Integer.toString(time.hour) + Integer.toString(time.minute) + Integer.toString(time.second) +".jpg"); // создать уникальное имя для файла основываясь на дате сохранения
-            fOut = new FileOutputStream(file);
-
-            Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut); 
-            fOut.flush();
-            fOut.close();
-            MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(),  file.getName()); // регистрация в фотоальбоме
-        }
-        catch (Exception e) 
-        {
-            return e.getMessage();
-        }
-        return "";
-    }
+   
 }
