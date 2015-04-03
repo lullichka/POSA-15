@@ -49,7 +49,7 @@ public class DownloadImageActivity extends Activity {
 		// @@ TODO -- you fill in here.
 		final Uri url = this.getIntent().getData();
 
-		Thread mThread = null;
+			Thread mThread = null;
 
 		Runnable downloadRunnable = new Runnable() {
 
@@ -57,9 +57,7 @@ public class DownloadImageActivity extends Activity {
 			public void run() {
 				DownloadUtils.downloadImage(getApplicationContext(),
 						url);
-				Intent intent = new Intent();
-				intent.setDataAndType(DownloadUtils.downloadImage(getApplicationContext(), url),"image/*");
-				setResult(RESULT_OK, intent);
+				
 				
 			}
 		};
@@ -77,7 +75,11 @@ public class DownloadImageActivity extends Activity {
 
 			@Override
 			public void run() {
-			
+				Uri mUri=DownloadUtils.downloadImage(getApplicationContext(),
+						url);
+				Intent intent = new Intent();
+				intent.putExtra("pathToImageFile", mUri.toString());
+				setResult(RESULT_OK, intent);
 				finish();
 			}
 		});

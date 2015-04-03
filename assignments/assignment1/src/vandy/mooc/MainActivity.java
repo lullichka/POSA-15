@@ -126,6 +126,7 @@ public class MainActivity extends LifecycleLoggingActivity {
                 // by passing in the path to the downloaded image
                 // file.
                 // @@ TODO -- you fill in here.
+            	
             	String pathToImageFile = data.getExtras().getString("pathToImageFile");
             	Intent i = makeGalleryIntent(pathToImageFile);
 
