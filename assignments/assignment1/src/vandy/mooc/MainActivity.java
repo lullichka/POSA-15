@@ -58,20 +58,7 @@ public class MainActivity extends LifecycleLoggingActivity {
         // initialization/implementation.
         // @@ TODO -- you fill in here.
     	super.onCreate(savedInstanceState);
-  	
-        if(savedInstanceState != null) {
-            // The activity is being re-created. Use the
-            // savedInstanceState bundle for initializations either
-            // during onCreate or onRestoreInstanceState().
-            Log.d(TAG,
-                  "onCreate(): activity re-created from savedInstanceState");
-						
-        } else {
-            // Activity is being created anew.  No prior saved
-            // instance state information available in Bundle object.
-            Log.d(TAG,
-                  "onCreate(): activity created anew");
-        }
+
         // Set the default layout.
         // @@ TODO -- you fill in here.
     	setContentView(R.layout.main_activity);
@@ -139,7 +126,8 @@ public class MainActivity extends LifecycleLoggingActivity {
                 // by passing in the path to the downloaded image
                 // file.
                 // @@ TODO -- you fill in here.
-            	Intent i = makeGalleryIntent(data.getData().toString());
+            	String pathToImageFile = data.getExtras().getString("pathToImageFile");
+            	Intent i = makeGalleryIntent(pathToImageFile);
 
                 // Start the Gallery Activity.
                 // @@ TODO -- you fill in here.
@@ -152,8 +140,8 @@ public class MainActivity extends LifecycleLoggingActivity {
         // download contents at the given URL.
         // @@ TODO -- you fill in here, replacing true with the right
         // code.
-        else if (true) {
-            Toast.makeText(this,
+        else if (resultCode != RESULT_OK && requestCode == DOWNLOAD_IMAGE_REQUEST){
+        	Toast.makeText(this,
                     "Activity not started",
                     Toast.LENGTH_SHORT).show();
         }

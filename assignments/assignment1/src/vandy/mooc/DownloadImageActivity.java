@@ -1,85 +1,86 @@
 package vandy.mooc;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Looper;
-import android.provider.MediaStore;
-import android.text.format.Time;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
- * An Activity that downloads an image, stores it in a local file on
- * the local device, and returns a Uri to the image file.
+ * An Activity that downloads an image, stores it in a local file on the local
+ * device, and returns a Uri to the image file.
  */
 public class DownloadImageActivity extends Activity {
-    /**
-     * Debugging tag used by the Android logger.
-     */
-    private final String TAG = getClass().getSimpleName();
-	private Runnable myRunnable;
-	
+	/**
+	 * Debugging tag used by the Android logger.
+	 */
+	private final String TAG = getClass().getSimpleName();
 
-    /**
-     * Hook method called when a new instance of Activity is created.
-     * One time initialization code goes here, e.g., UI layout and
-     * some class scope variable initialization.
-     *
-     * @param Bundle object that contains saved state information.
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        // Always call super class for necessary
-        // initialization/implementation.
-        // @@ TODO -- you fill in here.
-    	super.onCreate(savedInstanceState);
-   
-		
-        if(savedInstanceState != null) {
-            // The activity is being re-created. Use the
-            // savedInstanceState bundle for initializations either
-            // during onCreate or onRestoreInstanceState().
-            Log.d(TAG,
-                  "onCreate(): activity re-created from savedInstanceState");
-						
-        } else {
-            // Activity is being created anew.  No prior saved
-            // instance state information available in Bundle object.
-            Log.d(TAG,
-                  "onCreate(): activity created anew");
-        }
-        // Get the URL associated with the Intent data.
-        // @@ TODO -- you fill in here.
-        final Uri url = this.getIntent().getData();
+	/**
+	 * Hook method called when a new instance of Activity is created. One time
+	 * initialization code goes here, e.g., UI layout and some class scope
+	 * variable initialization.
+	 * 
+	 * @param Bundle
+	 *            object that contains saved state information.
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// Always call super class for necessary
+		// initialization/implementation.
+		// @@ TODO -- you fill in here.
+		super.onCreate(savedInstanceState);
 
-        // Download the image in the background, create an Intent that
-        // contains the path to the image file, and set this as the
-        // result of the Activity.
-     
-        	    	  DownloadImageActivity.this.runOnUiThread(new Runnable(){
+		if (savedInstanceState != null) {
+			// The activity is being re-created. Use the
+			// savedInstanceState bundle for initializations either
+			// during onCreate or onRestoreInstanceState().
+			Log.d(TAG,
+					"onCreate(): activity re-created from savedInstanceState");
 
-                       DownloadUtils.downloadImage(getApplicationContext(), url);
+		} else {
+			// Activity is being created anew. No prior saved
+			// instance state information available in Bundle object.
+			Log.d(TAG, "onCreate(): activity created anew");
+		}
+		// Get the URL associated with the Intent data.
+		// @@ TODO -- you fill in here.
+		final Uri url = this.getIntent().getData();
 
-    
-          
-        // @@ TODO -- you fill in here using the Android "HaMeR"
-        // concurrency framework.  Note that the finish() method
-        // should be called in the UI thread, whereas the other
-        // methods should be called in the background thread.
-      
-    }
-   
+		Thread mThread = null;
+
+		Runnable downloadRunnable = new Runnable() {
+
+			@Override
+			public void run() {
+				DownloadUtils.downloadImage(getApplicationContext(),
+						url);
+				Intent intent = new Intent();
+				intent.setDataAndType(DownloadUtils.downloadImage(getApplicationContext(), url),"image/*");
+				setResult(RESULT_OK, intent);
+				
+			}
+		};
+		// Create and Start a new Thread to perform the download and
+		// display the results to the user.
+		mThread = new Thread(downloadRunnable);
+		mThread.start();
+
+		// @@ TODO -- you fill in here using the Android "HaMeR"
+		// concurrency framework. Note that the finish() method
+		// should be called in the UI thread, whereas the other
+		// methods should be called in the background thread.
+		DownloadImageActivity.this.runOnUiThread(new Runnable() {
+
+
+			@Override
+			public void run() {
+			
+				finish();
+			}
+		});
+	}
+
 }
